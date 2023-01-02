@@ -1,0 +1,26 @@
+{
+  "name": "labecommerce-backend",
+  "version": "1.0.0",
+  "description": "Projeto back-end",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "game1": "node game-rps.js",
+    "game2": "node game-oae.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luawyn/labecommerce-backend.git"
+  },
+  "keywords": [
+    "backend"
+  ],
+  "author": "Luawyn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luawyn/labecommerce-backend/issues"
+  },
+  "homepage": "https://github.com/luawyn/labecommerce-backend#readme"
+}
