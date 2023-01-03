@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/luawyn/labecommerce-backend/issues"
   },
-  "homepage": "https://github.com/luawyn/labecommerce-backend#readme"
+  "homepage": "https://github.com/luawyn/labecommerce-backend#readme",
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  }
 }
