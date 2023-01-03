@@ -1,0 +1,25 @@
+{
+  "name": "labecommerce-backend",
+  "version": "1.0.0",
+  "description": "Projeto back-end",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node ./build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luawyn/labecommerce-backend.git"
+  },
+  "keywords": [
+    "backend"
+  ],
+  "author": "Luawyn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luawyn/labecommerce-backend/issues"
+  },
+  "homepage": "https://github.com/luawyn/labecommerce-backend#readme",
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  }
+}
