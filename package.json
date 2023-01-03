@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "Projeto back-end",
   "main": "index.js",
+<<<<<<< HEAD
+  "scripts": {
+    "start": "tsc && node ./build/index.js"
+=======
   "type": "module",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "game1": "node game-rps.js",
     "game2": "node game-oae.js"
+>>>>>>> main
   },
   "repository": {
     "type": "git",
