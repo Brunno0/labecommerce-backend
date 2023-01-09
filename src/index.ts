@@ -1,3 +1,4 @@
+
 // import {
 //   users,
 //   products,
@@ -18,12 +19,14 @@ import cors from "cors";
 import { products, purchases, users } from "./database";
 import { Category, TProduct, TPurchase, TUser } from "./types";
 
+
 // console.table(users);
 // console.table(products);
 // console.table(purchases);
 
 //Exercicio 2: chamando funções
 //user
+
 // createUser("3", "teste@teste.com", "654321");
 // console.log("Função que lista todos os usuários:");
 // console.table(getAllUsers(users));
@@ -44,6 +47,10 @@ import { Category, TProduct, TPurchase, TUser } from "./types";
 // createPurchase("3", "3", 6, 320.0);
 // console.log("Função para pegar uma compra pelo UserId:");
 // console.table(getAllPurchasesFromUserId("2"));
+
+// createUser("3", "teste@teste.com", "654321");
+// console.log("Função que lista todos os usuários:");
+// console.table(getAllUsers(users));
 
 const app = express();
 
@@ -126,3 +133,6 @@ app.post("/purchases", (req: Request, res: Response) => {
 
   res.status(201).send("Compra realizada com sucesso");
 });
+
+
+
