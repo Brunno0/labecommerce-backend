@@ -1,4 +1,3 @@
-
 // import {
 //   users,
 //   products,
@@ -18,7 +17,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import { products, purchases, users } from "./database";
 import { Category, TProduct, TPurchase, TUser } from "./types";
-
 
 // console.table(users);
 // console.table(products);
@@ -134,5 +132,66 @@ app.post("/purchases", (req: Request, res: Response) => {
   res.status(201).send("Compra realizada com sucesso");
 });
 
+app.get("/product/:id", (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const result = products.find((product) => product.id === id);
+  res.status(200).send(result);
+});
 
+app.get("/users/:id/purchases", (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const result = products.find((product) => product.id === id);
+  res.status(200).send(result);
+});
 
+app.delete("/user/:id", (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const userIndex = users.findIndex((user) => user.id === id);
+  if (userIndex >= 0) {
+    users.splice(userIndex, 1);
+  }
+  res.status(200).send("User apagado com sucesso");
+});
+
+app.delete("/product/:id", (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const productIndex = products.findIndex((product) => product.id === id);
+  if (productIndex >= 0) {
+    products.splice(productIndex, 1);
+  }
+  res.status(200).send("Produto apagado com sucesso");
+});
+
+app.put("/user/:id", (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const newId = req.body.id as string | undefined;
+  const newEmail = req.body.email as string | undefined;
+  const newPassword = req.body.password as string | undefined;
+
+  const user = users.find((user) => user.id === id);
+
+  if (user) {
+    user.id = newId || user.id;
+    user.email = newEmail || user.email;
+    user.password = newPassword || user.password;
+  }
+
+  res.status(200).send("Cadastro atualizado com sucesso");
+});
+
+app.put("/product/:id", (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const newId = req.body.id as string | undefined;
+  const newName = req.body.name as string | undefined;
+  const newPrice = req.body.price as number | undefined;
+  const newCategory = req.body.category as Category | undefined;
+
+  const product = products.find((product) => product.id === id);
+  if (product) {
+    product.id = newId || product.id;
+    product.name = newName || product.name;
+    product.price = newPrice || product.price;
+    product.category = newCategory || product.category;
+  }
+  res.status(200).send("Produto atualizado com sucesso");
+});

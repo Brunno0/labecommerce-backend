@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const database_1 = require("./database");
-<<<<<<< HEAD
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
@@ -67,20 +66,58 @@ app.post("/purchases", (req, res) => {
     database_1.purchases.push(newPurchase);
     res.status(201).send("Compra realizada com sucesso");
 });
-=======
-const types_1 = require("./types");
-(0, database_1.createUser)("3", "teste@teste.com", "654321");
-console.log("Função que lista todos os usuários:");
-console.table((0, database_1.getAllUsers)(database_1.users));
-(0, database_1.createProduct)("3", "colar", 250.0, types_1.Category.ACCESSORIES);
-console.log("Função que lista todos os produtos:");
-console.table((0, database_1.getAllProducts)(database_1.products));
-console.log("Função que pega o produto pelo Id:");
-console.table((0, database_1.getProductById)("3"));
-console.log("Função para pegar um produto pelo nome:");
-console.table((0, database_1.queryProductsByName)("mouse"));
-(0, database_1.createPurchase)("3", "3", 6, 320.0);
-console.log("Função para pegar uma compra pelo UserId:");
-console.table((0, database_1.getAllPurchasesFromUserId)("2"));
->>>>>>> main
+app.get("/product/:id", (req, res) => {
+    const id = req.params.id;
+    const result = database_1.products.find((product) => product.id === id);
+    res.status(200).send(result);
+});
+app.get("/users/:id/purchases", (req, res) => {
+    const id = req.params.id;
+    const result = database_1.products.find((product) => product.id === id);
+    res.status(200).send(result);
+});
+app.delete("/user/:id", (req, res) => {
+    const id = req.params.id;
+    const userIndex = database_1.users.findIndex((user) => user.id === id);
+    if (userIndex >= 0) {
+        database_1.users.splice(userIndex, 1);
+    }
+    res.status(200).send("User apagado com sucesso");
+});
+app.delete("/product/:id", (req, res) => {
+    const id = req.params.id;
+    const productIndex = database_1.products.findIndex((product) => product.id === id);
+    if (productIndex >= 0) {
+        database_1.products.splice(productIndex, 1);
+    }
+    res.status(200).send("Produto apagado com sucesso");
+});
+app.put("/user/:id", (req, res) => {
+    const id = req.params.id;
+    const newId = req.body.id;
+    const newEmail = req.body.email;
+    const newPassword = req.body.password;
+    const user = database_1.users.find((user) => user.id === id);
+    if (user) {
+        user.id = newId || user.id;
+        user.email = newEmail || user.email;
+        user.password = newPassword || user.password;
+    }
+    res.status(200).send("Cadastro atualizado com sucesso");
+});
+app.put("/product/:id", (req, res) => {
+    const id = req.params.id;
+    const newId = req.body.id;
+    const newName = req.body.name;
+    const newPrice = req.body.price;
+    const newCategory = req.body.category;
+    const product = database_1.products.find((product) => product.id === id);
+    if (product) {
+        product.id = newId || product.id;
+        product.name = newName || product.name;
+        product.price = newPrice || product.price;
+        product.category = newCategory || product.category;
+    }
+    res.status(200).send("Produto atualizado com sucesso");
+});
 //# sourceMappingURL=index.js.map

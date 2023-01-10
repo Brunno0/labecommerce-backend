@@ -4,11 +4,9 @@
   "description": "Projeto back-end",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
+
     "start": "tsc && node build/index.js"
-=======
-    "start": "tsc && node ./build/index.js"
->>>>>>> main
+
   },
   "repository": {
     "type": "git",
