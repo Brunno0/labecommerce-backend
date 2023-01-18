@@ -70,3 +70,20 @@ LIMIT 1,20;
 SELECT * FROM products
 WHERE price >= 100.00 AND price <= 300
 ORDER BY price ASC;
+
+CREATE TABLE purchases(
+id TEXT PRIMARY KEY UNIQUE NOT NULL,
+total_price REAL UNIQUE NOT NULL,
+paid INT NOT NULL,
+delivered_at TEXT NULL,
+buyer_id TEXT NOT NULL,
+FOREIGN KEY (buyer_id) REFERENCES users(id)
+);
+
+INSERT INTO purchases (id, total_price, paid, delivered_at, buyer_id)
+VALUES
+("p001", 120.99, 1, DATE('now'), "1"),
+("p002", 1200.50, 0, DATE('now'), "1"),
+("p003", 450.20, 1, DATE('now'), "2"),
+("p004", 150.99, 1, DATE('now'), "2"),
+("p005", 45.99, 0, DATE('now'), "3"),
