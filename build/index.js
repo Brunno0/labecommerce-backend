@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -6,48 +15,65 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const database_1 = require("./database");
+const knex_1 = require("./database/knex");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.listen(3003, () => {
     console.log("Servidor rodando na porta 3003");
 });
-app.get("/ping", (req, res) => {
-    res.send("Pong!");
-});
-app.get("/users", (req, res) => {
+app.get("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        res.status(200).send(database_1.users);
+        const result = yield knex_1.db.raw(`
+      SELECT * FROM users;
+    `);
+        res.status(200).send({ Users: result });
     }
     catch (error) {
         console.log(error);
         if (res.statusCode === 200) {
             res.status(500);
         }
-        res.send(error.message);
+        if (error instanceof Error) {
+            res.send(error.message);
+        }
+        else {
+            res.send("Erro inesperado");
+        }
     }
-});
-app.get("/products", (req, res) => {
+}));
+app.get("/products", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        res.status(200).send(database_1.products);
+        const result = yield knex_1.db.raw(`
+      SELECT * FROM products;
+    `);
+        res.status(200).send({ Products: result });
     }
     catch (error) {
         console.log(error);
         if (res.statusCode === 200) {
             res.status(500);
         }
-        res.send(error.message);
+        if (error instanceof Error) {
+            res.send(error.message);
+        }
+        else {
+            res.send("Erro inesperado");
+        }
     }
-});
-app.get("/product/search", (req, res) => {
+}));
+app.get("/product/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const q = req.query.q;
         if (q.length < 1) {
             res.status(400);
             throw new Error("query params deve possuir pelo menos um caractere");
         }
-        const result = database_1.products.filter((product) => product.name.toLowerCase().includes(q.toLowerCase()));
-        res.status(200).send(result);
+        const [product] = yield knex_1.db.raw(`
+      SELECT * FROM products
+      WHERE name = "${q}";
+    `);
+        res.status(200).send(product);
     }
     catch (error) {
         console.log(error);
@@ -56,8 +82,8 @@ app.get("/product/search", (req, res) => {
         }
         res.send(error.message);
     }
-});
-app.post("/users", (req, res) => {
+}));
+app.post("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.body.id;
         const email = req.body.email;
@@ -72,12 +98,11 @@ app.post("/users", (req, res) => {
             res.status(400);
             throw new Error("Email indisponivel");
         }
-        const newUser = {
-            id,
-            email,
-            password,
-        };
-        database_1.users.push(newUser);
+        const [user] = yield knex_1.db.raw(`
+        INSERT INTO users (id, email, password)
+        VALUES ("${id}", "${email}", "${password}" )
+    `);
+        database_1.users.push(user);
         res.status(201).send("Cadastro realizado com sucesso");
     }
     catch (error) {
@@ -87,7 +112,7 @@ app.post("/users", (req, res) => {
         }
         res.send(error.message);
     }
-});
+}));
 app.post("/products", (req, res) => {
     try {
         const id = req.body.id;
@@ -249,10 +274,8 @@ app.put("/user/:id", (req, res) => {
         const newEmail = req.body.email;
         const newPassword = req.body.password;
         if (newEmail === req.body.email) {
-            if (!user) {
-                res.status(400);
-                throw new Error("Email igual ao cadastrado no sistema");
-            }
+            res.status(400);
+            throw new Error("Email igual ao cadastrado no sistema");
         }
         const regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
         const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{4,12}$/g;
