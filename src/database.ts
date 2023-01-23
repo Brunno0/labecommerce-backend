@@ -30,16 +30,20 @@ export const products: TProduct[] = [
 
 export const purchases: TPurchase[] = [
   {
-    userId: "1",
-    productId: "1",
-    quantity: 3,
-    totalPrice: 400,
+    id: "b001",
+    quantity: 2,
+    totalPrice: 100.99,
+    paid: 1,
+    userId: "u001",
+    productId: "p002",
   },
   {
-    userId: "2",
-    productId: "2",
+    id: "b002",
     quantity: 1,
-    totalPrice: 32,
+    totalPrice: 125.99,
+    paid: 0,
+    userId: "u002",
+    productId: "p003",
   },
 ];
 
@@ -119,12 +123,21 @@ export function queryProductsByName(q: string): TProduct[] | undefined {
 // output: frase de sucesso ("Compra realizada com sucesso")
 // exemplo de chamada: createPurchase("u003", "p004", 2, 1600)
 export function createPurchase(
-  userId: string,
-  productId: string,
+  id: string,
   quantity: number,
-  totalPrice: number
+  totalPrice: number,
+  paid: number,
+  userId: string,
+  productId: string
 ) {
-  const newPurchase: TPurchase = { userId, productId, quantity, totalPrice };
+  const newPurchase: TPurchase = {
+    id,
+    totalPrice,
+    paid,
+    userId,
+    productId,
+    quantity,
+  };
   purchases.push(newPurchase);
   console.log("Compra realizada com sucesso");
 }

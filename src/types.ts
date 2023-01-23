@@ -12,12 +12,13 @@ export type TProduct = {
 };
 
 export type TPurchase = {
-  userId: string;
-  productId: string;
+  id: string;
   quantity: number;
   totalPrice: number;
+  paid: number;
+  userId: string;
+  productId: string;
 };
-
 export enum Category {
   ACCESSORIES = "Acessórios",
   CLOTHES_AND_SHOES = "Roupas e calçados",

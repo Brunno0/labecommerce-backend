@@ -2,44 +2,39 @@
 CREATE TABLE users (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,
   email TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  created_at TEXT DEFAULT(DATETIME('now', 'localtime')) NOT NULL
 );
 
 INSERT INTO users (id, email, password)
 VALUES
-("1", "email@gmail.com", "1234"),
-("2", "email@yahoo.com", "5678"),
-("3", "email@outlook.com", "9010");
+("u001", "email@gmail.com", "1234"),
+("u002", "email@yahoo.com", "5678"),
+("u003", "email@outlook.com", "9010");
 
 CREATE TABLE products (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,
   name TEXT NOT NULL,
-  price REAL NOT NULL, 
+  price REAL NOT NULL,
+  description TEXT NOT NULL,
+  image_url TEXT NOT NULL UNIQUE, 
   category TEXT NOT NULL
 );
 
-INSERT INTO products (id, name, price, category)
+INSERT INTO products (id, name, price, description, image_url, category)
 VALUES
-("001", "mouse", 450.20, "Eletrônicos"),
-("002", "teclado", 1200.50,"Eletrônicos"),
-("003", "camiseta", 45.99, "Roupas e calçados"),
-("004", "oculos", 150.99, "Acessórios"),
-("005", "colar", 500.00, "Acessórios");
+("p001", "Caneta Gel - Tilibra - Flow 0.5mm", 10.49, "Marca: Tilibra", "https://images.tcdn.com.br/img/img_prod/847325/caneta_gel_tilibra_flow_0_5mm_72624383_1_04c9f8c8c4034d276fc9adde91219027.jpg", "Canetas em Gel"),
+("p002", "Stabilo Boss Pastel - Stabilo - Estojo c/ 4 Cores", 57.99, "Marca: Stabilo", "https://images.tcdn.com.br/img/img_prod/847325/stabilo_boss_pastel_stabilo_estojo_c_4_cores_72624317_1_703ea3290d7c189c1d01a6e112f82691.jpg", "Marca Textos"),
+("p003", "Caderno Médio - Caderno Inteligente - Ônyx 80 Folhas 90g/m²", 122.99, "Marca: Caderno Inteligente", "https://images.tcdn.com.br/img/img_prod/847325/caderno_medio_caderno_inteligente_onyx_80_folhas_90g_m_72624505_1_9f36e7eb4eddb39d86631b4a405403aa.jpg" , "Cadernos"),
+("p004", "Caderno Argolado Colegial - Tilibra - Check Pop 160 Folhas", 105.99, "Marca: Tilibra", "https://images.tcdn.com.br/img/img_prod/847325/caderno_argolado_colegial_tilibra_check_pop_72624403_1_f3d52b7857ebb93ffb98e5eacea34b1a.jpg", "Cadernos argolados / Fichários"),
+("p005", "Marca Texto - CIS - Mini Lumini Pastel", 3.50, "Marca: CIS", "https://images.tcdn.com.br/img/img_prod/847325/marca_texto_cis_mini_lumini_pastel_72617691_1_eee228e0426195525ea91d9aad9f10ae.jpeg", "Marca Textos");
 
 SELECT * FROM users;
 
 SELECT * FROM products;
 
 SELECT * FROM products
-WHERE name LIKE "%mouse%";
-
-INSERT INTO users (id, email, password)
-VALUES
-("4", "email@hotmail.com", "1112");
-
-INSERT INTO products (id, name, price, category)
-VALUES
-("007", "Short", 120.99, "Roupas e calçados");
+WHERE name LIKE "%caderno%";
 
 SELECT * FROM products
 WHERE id = "003";
@@ -54,11 +49,11 @@ UPDATE users
 SET password = "newPassword"
 WHERE id = "2";
 
-UPDATE products
-SET 
-  name = "Teclado Mecânico Gamer HyperX Alloy MKW100, RGB, Switch Red, Full Size, Layout US - 4P5E1AA#ABA",
-  price = 299.99
-WHERE id = "002";
+-- UPDATE products
+-- SET 
+--   name = "Teclado Mecânico Gamer HyperX Alloy MKW100, RGB, Switch Red, Full Size, Layout US - 4P5E1AA#ABA",
+--   price = 299.99
+-- WHERE id = "002";
 
 SELECT * FROM users
 ORDER BY email ASC;
@@ -73,37 +68,28 @@ ORDER BY price ASC;
 
 CREATE TABLE purchases(
 id TEXT PRIMARY KEY UNIQUE NOT NULL,
+quantity INT NOT NULL,
 total_price REAL UNIQUE NOT NULL,
 paid INT NOT NULL,
-delivered_at TEXT NULL,
+created_at TEXT DEFAULT(DATETIME('now', 'localtime')) NOT NULL,
 buyer_id TEXT NOT NULL,
-FOREIGN KEY (buyer_id) REFERENCES users(id)
+product_id TEXT NOT NULL,
+FOREIGN KEY (buyer_id) REFERENCES users(id),
+FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
-INSERT INTO purchases (id, total_price, paid, delivered_at, buyer_id)
+INSERT INTO purchases (id, quantity, total_price, paid, buyer_id, product_id)
 VALUES
-("p001", 120.99, 1, '2023-01-10', "1"),
-("p002", 1200.50, 0, '2023-01-10', "1"),
-("p003", 450.20, 1, '2023-01-11', "2"),
-("p004", 150.99, 1, '2023-01-13', "2"),
-("p005", 45.99, 0, '2023-01-12' , "3");
-
-INSERT INTO purchases (id, total_price, paid, delivered_at, buyer_id)
-VALUES
-("p006", 229.99, 1, DATETIME(), "1"),
-("p007", 539.99, 0, DATETIME(), "3"),
-("p008", 129.99, 0, DATETIME(), "2"),
-("p009", 329.99, 0, DATETIME(), "1");
-
-UPDATE purchases
-SET delivered_at = DATETIME()
-WHERE id = "p002";
+("b001", 3, 10.49, 1,  "u001", "p001"),
+("b002", 1, 57.99, 0, "u003", "p002"),
+("b003", 1, 122.99, 0, "u002", "p003"),
+("b004", 1, 105.99, 0, "u001", "p004");
 
 SELECT * FROM users
 INNER JOIN purchases
 ON purchases.buyer_id = users.id
 -- ORDER BY users.id ASC
-WHERE users.id = "1";
+WHERE users.id = "u001";
 
 CREATE TABLE purchases_products(
     purchase_id TEXT NOT NULL,
@@ -140,3 +126,6 @@ INNER JOIN purchases
 ON purchases_products.purchase_id = purchases.id
 RIGHT JOIN products
 ON purchases_products.product_id = products.id;
+
+      SELECT * FROM products
+      WHERE LOWER(name) LIKE ("%mouse%");

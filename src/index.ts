@@ -17,6 +17,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import { products, purchases, users } from "./database";
 import { Category, TProduct, TPurchase, TUser } from "./types";
+import { db } from "./database/knex";
 
 // console.table(users);
 // console.table(products);
@@ -59,56 +60,74 @@ app.listen(3003, () => {
   console.log("Servidor rodando na porta 3003");
 });
 
-app.get("/ping", (req: Request, res: Response) => {
-  res.send("Pong!");
-});
-
-app.get("/users", (req: Request, res: Response) => {
+app.get("/users", async (req: Request, res: Response) => {
   try {
-    res.status(200).send(users);
+    const result = await db.raw(`
+      SELECT * FROM users;
+    `);
+    res.status(200).send({ Users: result });
   } catch (error: any) {
     console.log(error);
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
 
-app.get("/products", (req: Request, res: Response) => {
+app.get("/products", async (req: Request, res: Response) => {
   try {
-    res.status(200).send(products);
+    const result = await db.raw(`
+      SELECT * FROM products;
+    `);
+    res.status(200).send({ Products: result });
   } catch (error: any) {
     console.log(error);
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
 
 // colocar ?q= para testar no postman
-app.get("/product/search", (req: Request, res: Response) => {
+app.get("/product/search", async (req: Request, res: Response) => {
   try {
     const q = req.query.q as string;
     if (q.length < 1) {
       res.status(400);
       throw new Error("query params deve possuir pelo menos um caractere");
     }
-    const result = products.filter((product) =>
-      product.name.toLowerCase().includes(q.toLowerCase())
-    );
-    res.status(200).send(result);
+    // const result = products.filter((product) =>
+    //   product.name.toLowerCase().includes(q.toLowerCase())
+    // );
+    const product = await db.raw(`
+      SELECT * FROM products
+      WHERE LOWER(name) LIKE "%${q}%";
+    `);
+    res.status(200).send({ product: product });
   } catch (error: any) {
     console.log(error);
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
 
-app.post("/users", (req: Request, res: Response) => {
+app.post("/users", async (req: Request, res: Response) => {
   try {
     const id = req.body.id;
     const email = req.body.email;
@@ -126,11 +145,16 @@ app.post("/users", (req: Request, res: Response) => {
       throw new Error("Email indisponivel");
     }
 
-    const newUser: TUser = {
-      id,
-      email,
-      password,
-    };
+    // const newUser: TUser = {
+    //   id,
+    //   email,
+    //   password,
+    // };
+
+    const [newUser] = await db.raw(`
+    INSERT INTO users (id, email, password)
+        VALUES ("${id}", "${email}", "${password}");
+    `);
 
     users.push(newUser);
 
@@ -140,16 +164,17 @@ app.post("/users", (req: Request, res: Response) => {
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
 
-app.post("/products", (req: Request, res: Response) => {
+app.post("/products", async (req: Request, res: Response) => {
   try {
-    const id = req.body.id;
-    const name = req.body.name;
-    const price = req.body.price;
-    const category = req.body.category;
+    const { id, name, price, description, image_url, category } = req.body;
 
     const findId = products.find((product) => product.id === id);
     const findName = products.find((product) => product.name === name);
@@ -164,12 +189,17 @@ app.post("/products", (req: Request, res: Response) => {
       throw new Error("Nome de produto indisponivel");
     }
 
-    const newProduct: TProduct = {
-      id,
-      name,
-      price,
-      category,
-    };
+    // const newProduct: TProduct = {
+    //   id,
+    //   name,
+    //   price,
+    //   category,
+    // };
+
+    const [newProduct] = await db.raw(`
+    INSERT INTO products (id, name, price, description, image_url, category)
+    VALUES ("${id}", "${name}", ${price}, "${description}", "${image_url}", "${category}");
+    `);
 
     products.push(newProduct);
 
@@ -179,40 +209,39 @@ app.post("/products", (req: Request, res: Response) => {
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
 
-app.post("/purchases", (req: Request, res: Response) => {
+app.post("/purchases", async (req: Request, res: Response) => {
   try {
-    const userId = req.body.userId;
-    const productId = req.body.productId;
-    const quantity = req.body.quantity;
-    const totalPrice = req.body.totalPrice;
+    const { id, quantity, total_price, paid, buyer_id, product_id } = req.body;
 
-    const findUserId = purchases.find((purchase) => purchase.userId === userId);
-    if (!findUserId) {
+    if (paid > 1 && paid < 0) {
       res.status(400);
-      throw new Error("Id de usuario nao encontrado");
+      throw new Error("'paid' invalido, deve ser 0 ou 1");
     }
 
-    const findProductId = products.find((product) => product.id === productId);
-    if (!findProductId) {
+    if (
+      id.length < 1 ||
+      quantity.length < 1 ||
+      total_price.length < 1 ||
+      paid.length < 1 ||
+      buyer_id.length < 1 ||
+      product_id.length < 1
+    ) {
       res.status(400);
-      throw new Error("Id de produto nao encontrado");
+      throw new Error("As informações devem ter no minimo 1 caractere");
     }
 
-    if (findProductId.price * quantity !== totalPrice) {
-      res.status(400);
-      throw new Error("Total incorreto");
-    }
-
-    const newPurchase: TPurchase = {
-      userId,
-      productId,
-      quantity,
-      totalPrice,
-    };
+    const newPurchase = await db.raw(`
+    INSERT INTO purchases (id, quantity, total_price, paid, buyer_id, product_id)
+    VALUES ("${id}", ${quantity}, ${total_price}, ${paid}, "${buyer_id}", "${product_id}");
+    `);
 
     purchases.push(newPurchase);
 
@@ -226,39 +255,57 @@ app.post("/purchases", (req: Request, res: Response) => {
   }
 });
 
-app.get("/product/:id", (req: Request, res: Response) => {
+app.get("/product/:id", async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const result = products.find((product) => product.id === id);
-    if (!result) {
+    const [product] = await db.raw(`
+      SELECT * FROM products
+      WHERE id = "${id}"
+    `);
+
+    if (!product) {
       res.status(400);
-      throw new Error("Produto nao encontrado");
+      throw new Error("Produto não encontrado");
     }
-    res.status(200).send(result);
+
+    res.status(200).send({ product: product });
   } catch (error: any) {
     console.log(error);
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
 
-app.get("/users/:id/purchases", (req: Request, res: Response) => {
+app.get("/users/:id/purchases", async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const result = products.find((product) => product.id === id);
-    if (!result) {
+    const purchase = await db.raw(`
+      SELECT * FROM purchases
+      WHERE buyer_id = "${id}"
+    `);
+
+    if (!purchase) {
       res.status(400);
-      throw new Error("Produto nao encontrado");
+      throw new Error("Compra não encontrada");
     }
-    res.status(200).send(result);
+
+    res.status(200).send({ purchase: purchase });
   } catch (error: any) {
     console.log(error);
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
 
@@ -367,7 +414,11 @@ app.put("/user/:id", (req: Request, res: Response) => {
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
 
@@ -407,6 +458,10 @@ app.put("/product/:id", (req: Request, res: Response) => {
     if (res.statusCode === 200) {
       res.status(500);
     }
-    res.send(error.message);
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
 });
