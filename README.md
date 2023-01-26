@@ -1,10 +1,11 @@
 # Projeto labecommerce
-<div style="display: inline_block">
-  <img align="right" alt="unicorn-pic" height="120" src="https://media1.giphy.com/media/FoVzfcqCDSb7zCynOp/giphy.gif?cid=ecf05e472qtp73knmanmx98dcmcehiey8n36th3y1v9habhp&rid=giphy.gif">
-</div>
+
 É o primeiro projeto do back-end, onde praticamos toda a base de criação de uma API vinculada a um banco de dados real.<br>
 
 ## Conteúdos abordados
+<div style="display: inline_block">
+  <img align="right" alt="unicorn-pic" height="200" src="https://media1.giphy.com/media/FoVzfcqCDSb7zCynOp/giphy.gif?cid=ecf05e472qtp73knmanmx98dcmcehiey8n36th3y1v9habhp&rid=giphy.gif">
+</div>
 
 - NodeJS
 - Typescript
@@ -13,25 +14,24 @@
 - Knex
 - Postman
 
-# Banco de dados
+## Banco de dados
 ![image](https://user-images.githubusercontent.com/29845719/214396608-ddcfd097-e615-44f9-acbe-f815f9abb83f.png)
 https://dbdiagram.io/d/63c6e8e5296d97641d7a4666
 
- Endpoints
+## Endpoints
 
-    - [ ]  Get all users
-    - [ ]  Create user
-    - [ ]  Create product
-    - [ ]  Get all products funcionalidade 1
-    - [ ]  Get all products funcionalidade 2
-    - [ ]  Edit product by id
-    - [ ]  Create purchase
-    - [ ]  Delete purchase by id
-    - [ ]  Get purchase by id
+    - Get all users
+    - Create user
+    - Create product
+    - Get all products 
+    - Get all products with query params
+    - Edit product by id
+    - Create purchase
+    - Delete purchase by id
+    - Get purchase by id
 
 ## Get all users
 Retorna todas as pessoas cadastradas.<br>
-Dica: atenção com o nome da propriedade createdAt! Ela deve vir em camelCase, apesar de estar em snake_case no banco de dados.
 ```typescript
 // Request
 // GET /users
@@ -97,7 +97,7 @@ Cadastra um novo produto.
 }
 ```
 
-## Get all products funcionalidade 1
+## Get all products 
 Retorna todos os produtos cadastrados.
 ```typescript
 // Request
@@ -130,7 +130,7 @@ Retorna todos os produtos cadastrados.
 ]
 ```
 
-## Get all products funcionalidade 2
+## Get all products with query params
 Caso seja enviada uma query params (q) deve ser retornado o resultado da busca de produtos por nome.
 ```typescript
 // Request
