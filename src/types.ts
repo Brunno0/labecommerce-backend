@@ -8,7 +8,13 @@ export type TProduct = {
   id: string;
   name: string;
   price: number;
-  category: "Acessórios" | "Roupas e calçados" | "Eletrônicos";
+  description: string;
+  image_url: string;
+  category:
+    | "Marca Textos"
+    | "Cadernos argolados / Fichários"
+    | "Cadernos"
+    | "Canetas em Gel";
 };
 
 export type TPurchase = {
@@ -20,7 +26,8 @@ export type TPurchase = {
   productId: string;
 };
 export enum Category {
-  ACCESSORIES = "Acessórios",
-  CLOTHES_AND_SHOES = "Roupas e calçados",
-  ELECTRONICS = "Eletrônicos",
+  MARCA_TEXTOS = "Marca Textos",
+  CADERNOS_ARGOLADOS_FICHARIOS = "Cadernos argolados / Fichários",
+  CADERNOS = "Cadernos",
+  CANETAS_EM_GEL = "Canetas em Gel",
 }

@@ -2,48 +2,54 @@ import { TUser, TProduct, TPurchase, Category } from "./types";
 
 export const users: TUser[] = [
   {
-    id: "1",
-    email: "email@email.com",
+    id: "u001",
+    email: "email@gmail.com",
     password: "1234",
   },
   {
-    id: "2",
-    email: "teste@teste.com",
-    password: "4321",
+    id: "u002",
+    email: "email@yahoo.com",
+    password: "5678",
   },
 ];
 
 export const products: TProduct[] = [
   {
-    id: "1",
-    name: "mouse",
-    price: 340.9,
-    category: Category.ELECTRONICS,
+    id: "prod001",
+    name: "Caneta Gel - Tilibra - Flow 0.5mm",
+    price: 10.49,
+    description: "Marca: Tilibra",
+    image_url:
+      "https://images.tcdn.com.br/img/img_prod/847325/caneta_gel_tilibra_flow_0_5mm_72624383_1_04c9f8c8c4034d276fc9adde91219027.jpg",
+    category: Category.CANETAS_EM_GEL,
   },
   {
-    id: "2",
-    name: "camiseta",
-    price: 30.2,
-    category: Category.CLOTHES_AND_SHOES,
+    id: "prod002",
+    name: "Stabilo Boss Pastel - Stabilo - Estojo c/ 4 Cores",
+    price: 57.99,
+    description: "Marca: Stabilo",
+    image_url:
+      "https://images.tcdn.com.br/img/img_prod/847325/stabilo_boss_pastel_stabilo_estojo_c_4_cores_72624317_1_703ea3290d7c189c1d01a6e112f82691.jpg",
+    category: Category.MARCA_TEXTOS,
   },
 ];
 
 export const purchases: TPurchase[] = [
   {
-    id: "b001",
+    id: "pur001",
     quantity: 2,
     totalPrice: 100.99,
     paid: 1,
     userId: "u001",
-    productId: "p002",
+    productId: "prod002",
   },
   {
-    id: "b002",
+    id: "pur002",
     quantity: 1,
     totalPrice: 125.99,
     paid: 0,
     userId: "u002",
-    productId: "p003",
+    productId: "prod003",
   },
 ];
 
@@ -77,9 +83,18 @@ export function createProduct(
   id: string,
   name: string,
   price: number,
+  description: string,
+  image_url: string,
   category: Category
 ) {
-  const newProduct: TProduct = { id, name, price, category };
+  const newProduct: TProduct = {
+    id,
+    name,
+    price,
+    description,
+    image_url,
+    category,
+  };
   products.push(newProduct);
   console.log("Produto cadastrado com sucesso");
 }
